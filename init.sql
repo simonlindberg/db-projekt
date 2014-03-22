@@ -102,3 +102,22 @@ values
 ("Vanilla sugar","g"),
 ("Chocolate","g");
 
+insert into Customers (Customer, Address) 
+values 
+("Finkakor AB", "Helsingborg"), 
+("Smabröd AB", "Malmö"), 
+("Kaffebröd AB", "Landskrona"), 
+("Bjudkakor AB", "Ystad"), 
+("Kalaskakor AB", "Trelleborg"), 
+("Partykakor AB", "Kristianstad"), 
+("Gästkakor AB", "Hässleholm"), 
+("Skånekakor AB", "Perstorp");
+
+insert into recipes (productName)
+values 
+("Nut ring"), 
+("Nut cookie"), 
+("Amneris"), 
+("Tango"), 
+("Almond delight"), 
+("Berliner");
