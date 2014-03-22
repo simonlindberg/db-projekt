@@ -40,7 +40,7 @@ public class Database {
 		return instance;
 	}
 
-	public boolean blockPallet(final String productName, final Date start, final Date end) {
+	public int blockPallet(final String productName, final Date start, final Date end) {
 		PreparedStatement stmt = null;
 		try {
 			stmt = conn.prepareStatement("update Pallets" + " set blocked = 1" + " where ? <= productionDate" + " and ? >= productionDate"
@@ -48,11 +48,11 @@ public class Database {
 			stmt.setDate(1, start);
 			stmt.setDate(2, end);
 			stmt.setString(3, productName);
-			return stmt.executeUpdate() >= 1;
+			return stmt.executeUpdate();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
+			return -1;
 		} finally {
 			try {
 				stmt.close();
