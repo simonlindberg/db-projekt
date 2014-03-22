@@ -7,4 +7,9 @@ public class Storage implements Location {
 		return "in storage";
 	}
 
+	@Override
+	public String toString() {
+		return getLocationName();
+	}
+
 }

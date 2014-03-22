@@ -4,7 +4,7 @@ use db;
 
 create table Ingredients (
     Ingredient      varchar(100)  not null,
-    Quantity        float         not null default 0 check (Quantity>=0),
+    Quantity        float         not null default 1000000 check (Quantity>=0),
     Unit            varchar(10)   not null,
     primary key (Ingredient)
 );
@@ -33,10 +33,10 @@ create table RecipeIngredients (
 );
 
 create table Pallets (
-    PalletID        integer       not null auto_increment,
+    PalletID        integer       not null,
     ProductName     varchar(100)  not null,
     Blocked         bool          not null default 0,
-    ProductionDate  datetime      not null default now(),
+    ProductionDate  datetime      not null default now(), -- Remove later, maybe yes perhaps?
     primary key (PalletID),
     foreign key (ProductName)     references Recipes(ProductName)
 );
@@ -103,7 +103,7 @@ values
 ("Egg whites","dl"),
 ("Marzipan","g"),
 ("Potato starch","g"),
-("Wheat ﬂour","g"),
+("Wheat flour","g"),
 ("Sodium bicarbonate","g"),
 ("Vanilla","g"),
 ("Chopped almonds","g"),
@@ -129,7 +129,7 @@ values
 ("Nut ring", "Roasted, chopped nuts", 225),
 ("Nut cookie", "Fine-ground nuts", 750),
 ("Nut cookie", "Ground, roasted nuts", 625),
-("Nut cookie", "Bread crums", 125),
+("Nut cookie", "Bread crumbs", 125),
 ("Nut cookie", "Sugar", 375),
 ("Nut cookie", "Egg whites", 3.5),
 ("Nut cookie", "Chocolate", 50),

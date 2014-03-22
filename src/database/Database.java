@@ -6,7 +6,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class Database {
 
@@ -18,7 +17,7 @@ public class Database {
 		conn = DriverManager.getConnection("jdbc:mysql://localhost/db");
 	}
 
-	public final Database instance() {
+	public final static Database instance() {
 		if (instance == null) {
 			try {
 				instance = new Database();
@@ -36,12 +35,8 @@ public class Database {
 	public boolean blockPallet(final String productName, final Date start, final Date end) {
 		PreparedStatement stmt = null;
 		try {
-			stmt = conn
-					.prepareStatement("update Pallets"
-							+ " set blocked = 1"
-							+ " where ? <= productionDate"
-							+ " and ? >= productionDate"
-							+ " and ? = productName");
+			stmt = conn.prepareStatement("update Pallets" + " set blocked = 1" + " where ? <= productionDate" + " and ? >= productionDate"
+					+ " and ? = productName");
 			stmt.setDate(1, start);
 			stmt.setDate(2, end);
 			stmt.setString(3, productName);
@@ -63,12 +58,9 @@ public class Database {
 		PreparedStatement stmt = null;
 
 		try {
-			stmt = conn.prepareStatement("select s.PalletID, d.deliveryDate, o.Customer"
-					+ " from Pallets p"
-					+ " left join Storage s on s.PalletID = p.PalletID"
-					+ " left join PalletDelivery d on d.PalletID = p.PalletID"
-					+ " left join Orders o on o.OrderID = d.OrderID"
-					+ " where p.PalletID=id");
+			stmt = conn.prepareStatement("select s.PalletID, d.deliveryDate, o.Customer" + " from Pallets p"
+					+ " left join Storage s on s.PalletID = p.PalletID" + " left join PalletDelivery d on d.PalletID = p.PalletID"
+					+ " left join Orders o on o.OrderID = d.OrderID" + " where p.PalletID=?");
 
 			stmt.setInt(1, PalletID);
 			final ResultSet rs = stmt.executeQuery();
@@ -82,14 +74,111 @@ public class Database {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally{
+		} finally {
 			try {
 				stmt.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return new NullLocation();
+	}
+
+	public boolean palletProduced(final int id, final String productName) {
+		try {
+			conn.setAutoCommit(false);
+			if (!(addPallet(id, productName) && toStorage(id) && updateInventory(productName))) {
+				conn.rollback();
+				conn.setAutoCommit(true);
+				return false;
+			}
+
+			conn.commit();
+			conn.setAutoCommit(true);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+
+	private boolean addPallet(final int id, final String productName) {
+		PreparedStatement stmt = null;
+
+		try {
+			stmt = conn.prepareStatement("insert into Pallets (PalletID, ProductName) values (?,?);");
+
+			stmt.setInt(1, id);
+			stmt.setString(2, productName);
+
+			return stmt.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	private boolean updateInventory(final String productName) {
+		PreparedStatement stmt = null;
+
+		try {
+			stmt = conn.prepareStatement("UPDATE Ingredients i" + " INNER JOIN RecipeIngredients r ON i.Ingredient=r.Ingredient"
+					+ " SET i.Quantity = i.Quantity-r.Quantity*54" + " WHERE r.ProductName = ?");
+
+			stmt.setString(1, productName);
+
+			return stmt.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	private boolean toStorage(final int id) {
+		PreparedStatement stmt = null;
+
+		try {
+			stmt = conn.prepareStatement("insert into Storage (PalletID) values (?);");
+
+			stmt.setInt(1, id);
+
+			return stmt.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				stmt.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	public static void main(String a[]) {
+		test();
+	}
+
+	private static void test() {
+		for (int i = 0; i < 100; i++) {
+			Database.instance().palletProduced(i, "Nut ring");
+		}
+
+		for (int i = 1; i < 10; i++) {
+			System.out.println(Database.instance().searchPalletLocation(i));
+		}
 	}
 }
