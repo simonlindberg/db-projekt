@@ -33,8 +33,14 @@ public class GUI extends JFrame {
 	}
 
 	private void addBlockPallet(final JLabel errorMessage) {
-		final JTextField input = new JTextField(20);
+		final JLabel inputId = new JLabel("ID");
+		final JTextField input = new JTextField(5);
 		final JButton button = new JButton("Block pallet");
+
+		final JLabel from = new JLabel("Från");
+		final JTextField dateFrom = new JTextField(10);
+		final JLabel to = new JLabel("Till");
+		final JTextField dateTo = new JTextField(10);
 
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent e) {
@@ -56,7 +62,12 @@ public class GUI extends JFrame {
 			}
 		});
 
-		add(input, RiverLayout.LINE_BREAK);
+		add(from, RiverLayout.LINE_BREAK);
+		add(dateFrom);
+		add(to);
+		add(dateTo);
+		add(inputId);
+		add(input);
 		add(button);
 	}
 
