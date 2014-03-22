@@ -4,7 +4,7 @@ use db;
 
 create table Ingredients (
     Ingredient      varchar(100)  not null,
-    Quantity        integer       not null check (Quantity>=0),
+    Quantity        integer       not null default 0 check (Quantity>=0),
     Unit            varchar(10)   not null,
     primary key (Ingredient)
 );
@@ -78,3 +78,27 @@ create table PalletDelivery (
     foreign key (PalletID)        references Pallets(PalletID),
     foreign key (OrderID)         references Orders(OrderID)
 );
+
+
+insert into Ingredients (Ingredient, Unit)
+values
+("Flour","g"),
+("Butter","g"),
+("Icing sugar","g"),
+("Roasted, chopped nuts","g"),
+("Fine-ground nuts","g"),
+("Ground, roasted nuts","g"),
+("Bread crumbs","g"),
+("Sugar","g"),
+("Egg whites","dl"),
+("Marzipan","g"),
+("Potato starch","g"),
+("Wheat ﬂour","g"),
+("Sodium bicarbonate","g"),
+("Vanilla","g"),
+("Chopped almonds","g"),
+("Cinnamon","g"),
+("Eggs","g"),
+("Vanilla sugar","g"),
+("Chocolate","g");
+
