@@ -15,7 +15,7 @@ create table IngredientDelivery (
     Date            datetime      not null default now(),
     Quantity        integer       not null check (Quantity > 0),
     primary key (DeliveryID),
-    foreign key (Ingredient) references Ingredients(Ingredient)
+    foreign key (Ingredient)      references Ingredients(Ingredient)
 );
 
 create table Recipes (
@@ -28,8 +28,8 @@ create table RecipeIngredients (
     Ingredient      varchar(100)  not null,
     Quantity        integer       not null check (Quantity > 0),
     primary key (ProductName, Ingredient),
-    foreign key (ProductName) references Recipes(ProductName),
-    foreign key (Ingredient) references Ingredients(Ingredient) 
+    foreign key (ProductName)     references Recipes(ProductName),
+    foreign key (Ingredient)      references Ingredients(Ingredient) 
 );
 
 create table Pallets (
@@ -38,13 +38,13 @@ create table Pallets (
     Blocked         bool          not null default 0,
     ProductionDate  datetime      not null default now(),
     primary key (PalletID),
-    foreign key (ProductName)   references Recipes(ProductName)
+    foreign key (ProductName)     references Recipes(ProductName)
 );
 
 create table Storage (
     PalletId        integer       not null,
     primary key (PalletID),
-    foreign key (PalletID) references Pallets(PalletID)
+    foreign key (PalletID)        references Pallets(PalletID)
 );
 
 
@@ -58,7 +58,7 @@ create table Orders (
     OrderID         integer       not null auto_increment,
     Customer        varchar(100)  not null,
     primary key (OrderID),
-    foreign key (Customer)      references Customers(Customer)
+    foreign key (Customer)        references Customers(Customer)
 );
 
 create table PartialOrders (
@@ -66,8 +66,8 @@ create table PartialOrders (
     ProductName     varchar(100)  not null,
     Quantity        integer       not null check (Quantity > 0),
     primary key (OrderID, ProductName),
-    foreign key (OrderID)       references Orders(OrderID),
-    foreign key (ProductName)   references Recipes(ProductName)
+    foreign key (OrderID)         references Orders(OrderID),
+    foreign key (ProductName)     references Recipes(ProductName)
 );
 
 create table PalletDelivery (
@@ -75,6 +75,6 @@ create table PalletDelivery (
     OrderID         integer     not null,
     DeliveryDate    datetime    not null default now(),
     primary key (PalletID),
-    foreign key (PalletID)    references Pallets(PalletID),
-    foreign key (OrderID)     references Orders(OrderID)
+    foreign key (PalletID)      references Pallets(PalletID),
+    foreign key (OrderID)       references Orders(OrderID)
 );
