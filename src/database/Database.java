@@ -7,6 +7,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import location.Delivered;
+import location.Location;
+import location.NullLocation;
+import location.Storage;
+
 public class Database {
 
 	private final Connection conn;
