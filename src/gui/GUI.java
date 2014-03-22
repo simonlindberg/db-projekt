@@ -13,9 +13,6 @@ import se.datadosen.component.RiverLayout;
 
 public class GUI extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public GUI() {
@@ -23,46 +20,68 @@ public class GUI extends JFrame {
 		setTitle("Krusty Kookies Sweden AB");
 		setSize(700, 500);
 
-
 		final JLabel errorMessage = new JLabel();
-		
-		final JTextField palletInput = new JTextField(20);
-		final JButton palletButton = new JButton("Add pallet");
 
-		palletInput = new JTextField(20);
-		blockPallet = new JTextField(20);
-		
-		final JButton palletButton = new JButton("Add pallet");
-		final JButton blockPalletButton = new JButton("Block pallet");
-		
-		palletButton.addActionListener(new ActionListener() {
+		addProducePallet(errorMessage);
+		addBlockPallet(errorMessage);
+
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		add(errorMessage, RiverLayout.LINE_BREAK);
+		setVisible(true);
+	}
+
+	private void addBlockPallet(final JLabel errorMessage) {
+		final JTextField input = new JTextField(20);
+		final JButton button = new JButton("Block pallet");
+
+		button.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent e) {
-				final String text = palletInput.getText();
+				final String text = input.getText();
 
 				try {
 					final int id = Integer.parseInt(text);
-					Database.instance().palletProduced(id, "");
+					if (Database.instance().palletProduced(id, "")) {
+						errorMessage.setText("Success: Pallet " + id + " is now blocked!");
+					} else {
+						errorMessage
+								.setText("<html><font color='red'>Ouch, some thing went wrong. Perhaps the id doesn't exists.</font></html>");
+					}
 				} catch (NumberFormatException ex) {
-					errorMessage.setText("incorrect input, id must be an integer.");
+					errorMessage.setText("<html><font color='red'>Incorrect input, id must be an integer.</font></html>");
 				}
 			}
 		});
 
-		blockPalletButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("yay2");
+		add(input, RiverLayout.LINE_BREAK);
+		add(button);
+	}
+
+	private void addProducePallet(final JLabel errorMessage) {
+		final JTextField input = new JTextField(20);
+		final JButton button = new JButton("Add pallet");
+
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(final ActionEvent e) {
+				final String text = input.getText();
+
+				try {
+					final int id = Integer.parseInt(text);
+					if (Database.instance().palletProduced(id, "")) {
+						errorMessage.setText("Success: Pallet " + id + " is now registered.");
+					} else {
+						errorMessage
+								.setText("<html><font color='red'>Ouch, some thing went wrong. Perhaps the id already exists.</font></html>");
+					}
+				} catch (NumberFormatException ex) {
+					errorMessage.setText("<html><font color='red'>Incorrect input, id must be an integer.</font></html>");
+				}
 			}
 		});
-		
-		add(palletInput);
-		add(palletButton);
-		
-		add(blockPallet, RiverLayout.LINE_BREAK);
-		add(blockPalletButton);
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		add(input);
+		add(button);
 
-		setVisible(true); // "this" Frame shows
 	}
 
 	public static void main(String[] args) {
