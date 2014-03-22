@@ -1,10 +1,10 @@
-package database;
+package location;
 
-public class NullLocation implements Location {
+public class Storage implements Location {
 
 	@Override
 	public String getLocationName() {
-		return "no where to be found.";
+		return "in storage";
 	}
 
 	@Override

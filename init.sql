@@ -4,7 +4,7 @@ use db;
 
 create table Ingredients (
     Ingredient      varchar(100)  not null,
-    Quantity        float         not null default 1000000 check (Quantity>=0),
+    Quantity        float         not null default 10000 check (Quantity>=0),
     Unit            varchar(10)   not null,
     primary key (Ingredient)
 );
@@ -154,3 +154,4 @@ values
 ("Berliner", "Eggs", 50),
 ("Berliner", "Vanilla sugar", 5),
 ("Berliner", "Chocolate", 50);
+
