@@ -6,6 +6,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import location.Delivered;
 import location.Location;
@@ -186,4 +189,43 @@ public class Database {
 			System.out.println(Database.instance().searchPalletLocation(i));
 		}
 	}
+	
+	public String[] getRecipes() {
+		String selectTableSQL = "select ProductName from Recipes;";
+		Statement statement = null;
+		ResultSet rs = null;
+		
+		List<String> products = new ArrayList<String>();
+		
+		try {
+			statement = conn.createStatement();
+			rs = statement.executeQuery(selectTableSQL);
+			while (rs.next()) {
+				products.add(rs.getString("ProductName"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (statement != null) {
+				try {
+					statement.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return products.toArray(new String[products.size()]);
+	}
+	
 }
