@@ -71,10 +71,10 @@ create table PartialOrders (
 );
 
 create table PalletDelivery (
-    PalletID        integer     not null,
-    OrderID         integer     not null,
-    DeliveryDate    datetime    not null default now(),
+    PalletID        integer       not null,
+    OrderID         integer       not null,
+    DeliveryDate    datetime      not null default now(),
     primary key (PalletID),
-    foreign key (PalletID)      references Pallets(PalletID),
-    foreign key (OrderID)       references Orders(OrderID)
+    foreign key (PalletID)        references Pallets(PalletID),
+    foreign key (OrderID)         references Orders(OrderID)
 );
