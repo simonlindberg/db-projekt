@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -62,6 +63,7 @@ public class GUI extends JFrame {
 	private void addProducePallet(final JLabel errorMessage) {
 		final JTextField input = new JTextField(20);
 		final JButton button = new JButton("Add pallet");
+		final JComboBox products = new JComboBox(Database.instance().getRecipes());
 
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent e) {
@@ -83,6 +85,7 @@ public class GUI extends JFrame {
 			}
 		});
 
+		add(products);
 		add(input);
 		add(button);
 
