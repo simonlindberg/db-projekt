@@ -17,6 +17,7 @@ public class GUI extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private JTextField palletInput;
+	private JTextField blockPallet;
 
 	public GUI() {
 		setLayout(new RiverLayout());
@@ -24,16 +25,28 @@ public class GUI extends JFrame {
 		setSize(700, 500);
 
 		palletInput = new JTextField(20);
+		blockPallet = new JTextField(20);
+		
 		JButton palletButton = new JButton("Add pallet");
-
+		JButton blockPalletButton = new JButton("Block pallet");
+		
 		palletButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("yay");
 			}
 		});
 
+		blockPalletButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("yay2");
+			}
+		});
+		
 		add(palletInput);
 		add(palletButton);
+		
+		add(blockPallet, RiverLayout.LINE_BREAK);
+		add(blockPalletButton);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
