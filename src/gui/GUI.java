@@ -23,11 +23,18 @@ public class GUI extends JFrame {
 		setTitle("Krusty Kookies Sweden AB");
 		setSize(700, 500);
 
+
 		final JLabel errorMessage = new JLabel();
 		
 		final JTextField palletInput = new JTextField(20);
 		final JButton palletButton = new JButton("Add pallet");
 
+		palletInput = new JTextField(20);
+		blockPallet = new JTextField(20);
+		
+		final JButton palletButton = new JButton("Add pallet");
+		final JButton blockPalletButton = new JButton("Block pallet");
+		
 		palletButton.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent e) {
 				final String text = palletInput.getText();
@@ -41,8 +48,17 @@ public class GUI extends JFrame {
 			}
 		});
 
+		blockPalletButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("yay2");
+			}
+		});
+		
 		add(palletInput);
 		add(palletButton);
+		
+		add(blockPallet, RiverLayout.LINE_BREAK);
+		add(blockPalletButton);
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
