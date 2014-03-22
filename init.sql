@@ -1,69 +1,80 @@
-CREATE TABLE Ingredients
-(
-Ingredient VARCHAR(100) PRIMARY KEY,
-Quantity INT NOT NULL CHECK (Quantity>=0),
-Unit VARCHAR(10) NOT NULL
+drop database db;
+create database db;
+use db;
+
+create table Ingredients (
+    Ingredient      varchar(100)  not null,
+    Quantity        integer       not null check (Quantity>=0),
+    Unit            varchar(10)   not null,
+    primary key (Ingredient)
 );
 
-CREATE TABLE IngredientDelivery 
-(
-DeliveryID INT auto_increment PRIMARY KEY,
-Ingredient VARCHAR(100) REFERENCES Ingredients(Ingredient),
-Date datetime NOT NULL DEFAULT NOW(),
-Quantity INT NOT NULL CHECK (Quantity>0)
-
+create table IngredientDelivery (
+    DeliveryID      integer       not null auto_increment,
+    Ingredient      varchar(100)  not null,
+    Date            datetime      not null default now(),
+    Quantity        integer       not null check (Quantity > 0),
+    primary key (DeliveryID),
+    foreign key (Ingredient) references Ingredients(Ingredient)
 );
 
-CREATE TABLE Recipes
-(
-ProductName VARCHAR(100) PRIMARY KEY;
+create table Recipes (
+    ProductName     varchar(100)  not null,
+    primary key (ProductName)
 );
 
-CREATE TABLE RecipeIngredients 
-(
-ProductName VARCHAR(100) REFERENCES Recipes(ProductName),
-Ingredient VARCHAR(100) REFERENCES Ingridients(Ingredient),
-Quantity INT NOT NULL CHECK (Quantity>0),
-PRIMARY KEY (ProductName, Ingredient)
+create table RecipeIngredients (
+    ProductName     varchar(100)  not null,
+    Ingredient      varchar(100)  not null,
+    Quantity        integer       not null check (Quantity > 0),
+    primary key (ProductName, Ingredient),
+    foreign key (ProductName) references Recipes(ProductName),
+    foreign key (Ingredient) references Ingredients(Ingredient) 
 );
 
-CREATE TABLE Pallets 
-(
-PalletID INT auto_increment PRIMARY KEY,
-ProductName VARCHAR(100) REFERENCES Recipes(ProductName),
-Blocked BOOL NOT NULL DEFAULT 0,
-ProductionDate datetime NOT NULL DEFAULT NOW()
+create table Pallets (
+    PalletID        integer       not null auto_increment,
+    ProductName     varchar(100)  not null,
+    Blocked         bool          not null default 0,
+    ProductionDate  datetime      not null default now(),
+    primary key (PalletID),
+    foreign key (ProductName)   references Recipes(ProductName)
 );
 
-CREATE TABLE Storage
-(
-PalletId INT REFERENCES(Pallets(PalletID)) PRIMARY KEY,
+create table Storage (
+    PalletId        integer       not null,
+    primary key (PalletID),
+    foreign key (PalletID) references Pallets(PalletID)
 );
 
 
-CREATE TABLE Customers
-(
-Customer VARCHAR(100) NOT NULL PRIMARY KEY,
-Address VARCHAR(101) NOT NULL
+create table Customers (
+    Customer        varchar(100)  not null,
+    Address         varchar(101)  not null,
+    primary key (Customer)
 );
 
-CREATE TABLE Orders
-(
-OrderID INT auto_increment PRIMARY KEY
-Customer VARCHAR(100) REFERENCES Customers(Customer)
+create table Orders (
+    OrderID         integer       not null auto_increment,
+    Customer        varchar(100)  not null,
+    primary key (OrderID),
+    foreign key (Customer)      references Customers(Customer)
 );
 
-CREATE TABLE PartialOrders 
-(
-OrderID INT REFERENCES(Orders(OrderID))
-ProductName VARCHAR(100) REFERENCES Recipes(ProductName) 
-Quantity INT NOT NULL CHECK (Quantity>0),
-PRIMARY KEY (OrderID, ProductName) 
+create table PartialOrders (
+    OrderID         integer       not null,
+    ProductName     varchar(100)  not null,
+    Quantity        integer       not null check (Quantity > 0),
+    primary key (OrderID, ProductName),
+    foreign key (OrderID)       references Orders(OrderID),
+    foreign key (ProductName)   references Recipes(ProductName)
 );
 
-CREATE TABLE PalletDelivery
-(
-PalletID INT REFERENCES Pallets(PalletID) PRIMARY KEY,
-OrderID INT REFERENCES Orders(OrderID),
-DeliveryDate datetime NOT NULL DEFAULT NOW()
+create table PalletDelivery (
+    PalletID        integer     not null,
+    OrderID         integer     not null,
+    DeliveryDate    datetime    not null default now(),
+    primary key (PalletID),
+    foreign key (PalletID)    references Pallets(PalletID),
+    foreign key (OrderID)     references Orders(OrderID)
 );
