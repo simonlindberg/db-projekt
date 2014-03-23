@@ -25,11 +25,18 @@ public class GUI extends JFrame {
 
 	public GUI() {
 		setLayout(new RiverLayout());
+
+		addComponents();
+
 		setTitle("Krusty Kookies Sweden AB");
 		setSize(700, 500);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setVisible(true);
 
+	}
+
+	private void addComponents() {
 		final JLabel errorMessage = new JLabel();
 
 		add(new JLabel("Pallet produced:"));
@@ -43,8 +50,8 @@ public class GUI extends JFrame {
 		add(new JLabel("Pallet search:"), RiverLayout.LINE_BREAK);
 		addSearchBlock(errorMessage);
 
+		add(new JLabel(" "), RiverLayout.LINE_BREAK);
 		add(errorMessage, RiverLayout.LINE_BREAK);
-		setVisible(true);
 	}
 
 	private void addSearchBlock(final JLabel errorMessage) {
