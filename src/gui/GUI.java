@@ -39,7 +39,7 @@ public class GUI extends JFrame {
 
 	private void addSearchBlock(final JLabel errorMessage) {
 		final JTextField input = new JTextField(20);
-		final JButton button = new JButton("Add pallet");
+		final JButton button = new JButton("Search pallet");
 
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent e) {

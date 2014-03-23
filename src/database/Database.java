@@ -31,8 +31,8 @@ public class Database {
 				instance = new Database();
 			} catch (SQLException | ClassNotFoundException e) {
 				e.printStackTrace();
-				System.out.println("No database connection found.");
-				System.out.println("Irreversable error, shutting down.");
+				System.err.println("No database connection found.");
+				System.err.println("Irreversable error, shutting down.");
 				System.exit(-1);
 			}
 		}
@@ -43,7 +43,10 @@ public class Database {
 	public int blockPallet(final String productName, final Date start, final Date end) {
 		PreparedStatement stmt = null;
 		try {
-			stmt = conn.prepareStatement("update Pallets" + " set blocked = 1" + " where ? <= productionDate" + " and ? >= productionDate"
+			stmt = conn.prepareStatement("update Pallets"
+					+ " set blocked = 1"
+					+ " where ? <= productionDate"
+					+ " and ? >= productionDate"
 					+ " and ? = productName");
 			stmt.setDate(1, start);
 			stmt.setDate(2, end);
@@ -66,9 +69,12 @@ public class Database {
 		PreparedStatement stmt = null;
 
 		try {
-			stmt = conn.prepareStatement("select s.PalletID, d.deliveryDate, o.Customer" + " from Pallets p"
-					+ " left join Storage s on s.PalletID = p.PalletID" + " left join PalletDelivery d on d.PalletID = p.PalletID"
-					+ " left join Orders o on o.OrderID = d.OrderID" + " where p.PalletID=?");
+			stmt = conn.prepareStatement("select s.PalletID, d.deliveryDate, o.Customer"
+					+ " from Pallets p"
+					+ " left join Storage s on s.PalletID = p.PalletID"
+					+ " left join PalletDelivery d on d.PalletID = p.PalletID"
+					+ " left join Orders o on o.OrderID = d.OrderID"
+					+ " where p.PalletID=?");
 
 			stmt.setInt(1, PalletID);
 			final ResultSet rs = stmt.executeQuery();
@@ -137,8 +143,11 @@ public class Database {
 		PreparedStatement stmt = null;
 
 		try {
-			stmt = conn.prepareStatement("UPDATE Ingredients i" + " INNER JOIN RecipeIngredients r ON i.Ingredient=r.Ingredient"
-					+ " SET i.Quantity = i.Quantity-r.Quantity*54" + " WHERE r.ProductName = ?");
+			stmt = conn.prepareStatement("update Ingredients i"
+					+ " inner join RecipeIngredients r"
+					+ " on i.Ingredient = r.Ingredient"
+					+ " set i.Quantity = i.Quantity - r.Quantity * 54"
+					+ " where r.ProductName = ?");
 
 			stmt.setString(1, productName);
 
@@ -176,56 +185,29 @@ public class Database {
 		return false;
 	}
 
-	public static void main(String a[]) {
-		test();
-	}
-
-	private static void test() {
-		for (int i = 0; i < 100; i++) {
-			Database.instance().palletProduced(i, "Nut ring");
-		}
-
-		for (int i = 1; i < 10; i++) {
-			System.out.println(Database.instance().searchPalletLocation(i));
-		}
-	}
-	
 	public String[] getRecipes() {
 		String selectTableSQL = "select ProductName from Recipes;";
 		Statement statement = null;
-		ResultSet rs = null;
-		
+
 		List<String> products = new ArrayList<String>();
-		
+
 		try {
 			statement = conn.createStatement();
-			rs = statement.executeQuery(selectTableSQL);
+			final ResultSet rs = statement.executeQuery(selectTableSQL);
 			while (rs.next()) {
 				products.add(rs.getString("ProductName"));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (statement != null) {
-				try {
-					statement.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			try {
+				statement.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
-		
+
 		return products.toArray(new String[products.size()]);
 	}
-	
+
 }

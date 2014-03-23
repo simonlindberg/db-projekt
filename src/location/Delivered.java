@@ -15,10 +15,7 @@ public class Delivered implements Location {
 	@SuppressWarnings("deprecation")
 	@Override
 	public String getLocationName() {
-		return "delivered to "
-	+ customer + ", "
-				+ date.toString() +
-				", at " + date.getHours() + ":" + date.getMinutes() + ".";
+		return "delivered to " + customer + " (" + date.toString() + ", at " + date.getHours() + ":" + date.getMinutes() + ")";
 	}
 
 	@Override
