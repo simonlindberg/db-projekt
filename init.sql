@@ -4,7 +4,7 @@ use db;
 
 create table Ingredients (
     Ingredient      varchar(100)  not null,
-    Quantity        float         not null default 10000 check (Quantity>=0),
+    Quantity        float         not null default 0 check (Quantity>=0),
     Unit            varchar(10)   not null,
     primary key (Ingredient)
 );
@@ -36,7 +36,7 @@ create table Pallets (
     PalletID        integer       not null,
     ProductName     varchar(100)  not null,
     Blocked         bool          not null default 0,
-    ProductionDate  datetime      not null default now(), -- Remove later, maybe yes perhaps?
+    ProductionDate  datetime      not null default now(),
     primary key (PalletID),
     foreign key (ProductName)     references Recipes(ProductName)
 );
@@ -111,6 +111,9 @@ values
 ("Eggs","g"),
 ("Vanilla sugar","g"),
 ("Chocolate","g");
+
+--update Ingredients
+--set Quantity = 10000;
 
 insert into recipes (productName)
 values 
