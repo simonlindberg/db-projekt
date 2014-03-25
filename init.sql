@@ -9,7 +9,7 @@ create table Ingredients (
     primary key (Ingredient)
 );
 
-create table IngredientDelivery (
+create table IngredientDeliveries (
     DeliveryID      integer       not null auto_increment,
     Ingredient      varchar(100)  not null,
     Date            datetime      not null default now(),
@@ -70,7 +70,7 @@ create table PartialOrders (
     foreign key (ProductName)     references Recipes(ProductName)
 );
 
-create table PalletDelivery (
+create table PalletDeliveries (
     PalletID        integer       not null,
     OrderID         integer       not null,
     DeliveryDate    datetime      not null default now(),
