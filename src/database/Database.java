@@ -15,7 +15,7 @@ import location.Location;
 import location.NullLocation;
 import location.Storage;
 
-public class Database {
+public final class Database {
 
 	private final Connection conn;
 	private static Database instance;
@@ -40,14 +40,22 @@ public class Database {
 		return instance;
 	}
 
+	/**
+	 * Blocks pallets within two dates and with the specific product.
+	 * 
+	 * @param productName
+	 * @param start
+	 * @param end
+	 * @return the number of pallets blocked. -1 if and error occur.
+	 */
 	public int blockPallet(final String productName, final Date start, final Date end) {
 		PreparedStatement stmt = null;
 		try {
 			stmt = conn.prepareStatement("update Pallets"
-					+ " set blocked = 1"
-					+ " where ? <= productionDate"
-					+ " and ? >= productionDate"
-					+ " and ? = productName");
+										+ " set blocked = 1"
+										+ " where ? <= productionDate"
+										+ " and ? >= productionDate"
+										+ " and ? = productName");
 			stmt.setDate(1, start);
 			stmt.setDate(2, end);
 			stmt.setString(3, productName);
@@ -65,16 +73,22 @@ public class Database {
 		}
 	}
 
+	/**
+	 * gives the location of a pallet with a specific palletID.
+	 * 
+	 * @param PalletID
+	 * @return a location, never null.
+	 */
 	public Location searchPalletLocation(final int PalletID) {
 		PreparedStatement stmt = null;
 
 		try {
 			stmt = conn.prepareStatement("select s.PalletID, d.deliveryDate, o.Customer"
-					+ " from Pallets p"
-					+ " left join Storage s on s.PalletID = p.PalletID"
-					+ " left join PalletDelivery d on d.PalletID = p.PalletID"
-					+ " left join Orders o on o.OrderID = d.OrderID"
-					+ " where p.PalletID=?");
+										+ " from Pallets p"
+										+ " left join Storage s on s.PalletID = p.PalletID"
+										+ " left join PalletDelivery d on d.PalletID = p.PalletID"
+										+ " left join Orders o on o.OrderID = d.OrderID"
+										+ " where p.PalletID=?");
 
 			stmt.setInt(1, PalletID);
 			final ResultSet rs = stmt.executeQuery();
@@ -99,6 +113,14 @@ public class Database {
 		return new NullLocation();
 	}
 
+	/**
+	 * Introduces a newly produced pallet to the database. It is added to
+	 * storage and the ingridient inventory is updated.
+	 * 
+	 * @param id
+	 * @param productName
+	 * @return
+	 */
 	public boolean palletProduced(final int id, final String productName) {
 		try {
 			conn.setAutoCommit(false);
@@ -144,10 +166,10 @@ public class Database {
 
 		try {
 			stmt = conn.prepareStatement("update Ingredients i"
-					+ " inner join RecipeIngredients r"
-					+ " on i.Ingredient = r.Ingredient"
-					+ " set i.Quantity = i.Quantity - r.Quantity * 54"
-					+ " where r.ProductName = ?");
+										+ " inner join RecipeIngredients r"
+										+ " on i.Ingredient = r.Ingredient"
+										+ " set i.Quantity = i.Quantity - r.Quantity * 54"
+										+ " where r.ProductName = ?");
 
 			stmt.setString(1, productName);
 
@@ -185,6 +207,11 @@ public class Database {
 		return false;
 	}
 
+	/**
+	 * Fetches all the recipes from the database.
+	 * 
+	 * @return
+	 */
 	public String[] getRecipes() {
 		String selectTableSQL = "select ProductName from Recipes;";
 		Statement statement = null;
@@ -207,7 +234,7 @@ public class Database {
 			}
 		}
 
-		return products.toArray(new String[products.size()]);
+		return products.toArray(new String[0]);
 	}
 
 }
