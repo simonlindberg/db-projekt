@@ -51,14 +51,12 @@ public final class Database {
 	public int blockPallet(final String productName, final Date start, final Date end) {
 		PreparedStatement stmt = null;
 		try {
-			stmt = conn.prepareStatement("update Pallets"
-										+ " set blocked = 1"
-										+ " where ? <= productionDate"
-										+ " and ? >= productionDate"
-										+ " and ? = productName");
+			stmt = conn.prepareStatement("update Pallets" + " set blocked = 1" + " where ? <= productionDate" + " and ? >= productionDate"
+					+ " and ? = productName");
 			stmt.setDate(1, start);
 			stmt.setDate(2, end);
 			stmt.setString(3, productName);
+			System.out.println(stmt.toString());
 			return stmt.executeUpdate();
 
 		} catch (SQLException e) {
@@ -83,12 +81,9 @@ public final class Database {
 		PreparedStatement stmt = null;
 
 		try {
-			stmt = conn.prepareStatement("select s.PalletID, d.deliveryDate, o.Customer"
-										+ " from Pallets p"
-										+ " left join Storage s on s.PalletID = p.PalletID"
-										+ " left join PalletDelivery d on d.PalletID = p.PalletID"
-										+ " left join Orders o on o.OrderID = d.OrderID"
-										+ " where p.PalletID=?");
+			stmt = conn.prepareStatement("select s.PalletID, d.deliveryDate, o.Customer" + " from Pallets p"
+					+ " left join Storage s on s.PalletID = p.PalletID" + " left join PalletDeliveries d on d.PalletID = p.PalletID"
+					+ " left join Orders o on o.OrderID = d.OrderID" + " where p.PalletID=?");
 
 			stmt.setInt(1, PalletID);
 			final ResultSet rs = stmt.executeQuery();
@@ -165,11 +160,8 @@ public final class Database {
 		PreparedStatement stmt = null;
 
 		try {
-			stmt = conn.prepareStatement("update Ingredients i"
-										+ " inner join RecipeIngredients r"
-										+ " on i.Ingredient = r.Ingredient"
-										+ " set i.Quantity = i.Quantity - r.Quantity * 54"
-										+ " where r.ProductName = ?");
+			stmt = conn.prepareStatement("update Ingredients i" + " inner join RecipeIngredients r" + " on i.Ingredient = r.Ingredient"
+					+ " set i.Quantity = i.Quantity - r.Quantity * 54" + " where r.ProductName = ?");
 
 			stmt.setString(1, productName);
 
@@ -235,6 +227,68 @@ public final class Database {
 		}
 
 		return products.toArray(new String[0]);
+	}
+
+	public String searchPallet(int id, boolean blocked, Date from, Date to, String selectedItem, boolean selected) {
+		String query = "select p.Blocked, p.ProductName, p.ProductionDate, s.PalletID, d.deliveryDate, o.Customer" + " from Pallets p"
+				+ " left join Storage s on s.PalletID = p.PalletID" + " left join PalletDeliveries d on d.PalletID = p.PalletID"
+				+ " left join Orders o on o.OrderID = d.OrderID";
+		
+		String where = "";
+		if (id > 0) {
+			where += "s.PalletID = " + id + " and ";
+		}
+		if (blocked) {
+			where += "p.Blocked = 1 and ";
+		}
+		if (from != null && to != null) {
+			where += "p.ProductionDate >= '" + from + "' and p.Productiondate <= '" + to + "' and ";
+		}
+		if (!selectedItem.equals("All products")) {
+			where += "p.ProductName = '" + selectedItem + "' and ";
+		}
+		if (selected) {
+			where += "d.deliveryDate IS NOT NULL and ";
+		}
+
+		if (!where.equals("")) {
+			where = where.substring(0, where.length() - 4);
+			query += " WHERE " + where;
+		}
+
+		System.out.println(query);
+
+		final StringBuilder sb = new StringBuilder();
+		try {
+			Statement stmt = conn.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+
+			while (rs.next()) {
+				sb.append("Pallet ID: " + rs.getInt(4) + "\n");
+				sb.append("  Blocked: " + rs.getBoolean(1) + "\n");
+				sb.append("  Product name: " + rs.getString(2) + "\n");
+				sb.append("  Production date: " + rs.getDate(3) + "\n");
+
+				if (rs.getDate(5) == null) {
+					sb.append("  In storage.\n");
+				} else {
+					sb.append("  Delivery date: " + rs.getDate(5) + "\n");
+					sb.append("  To customer: " + rs.getString(6) + "\n");
+				}
+
+				System.out.println("Pallet ID: " + rs.getInt(4));
+				System.out.println("Blocked: " + rs.getBoolean(1));
+				System.out.println("Product name: " + rs.getString(2));
+				System.out.println("Production date: " + rs.getDate(3));
+				System.out.println("Delivery date: " + rs.getDate(5));
+				System.out.println("Customer: " + rs.getString(6));
+			}
+			return sb.toString();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "ERROR!";
+		}
 	}
 
 }
